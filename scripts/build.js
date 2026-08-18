@@ -6,18 +6,34 @@
 const fs = require('fs');
 const path = require('path');
 const { allRows } = require('./match.js');
+const { STORE, BATTLEPASS, LIMITED_COLLECTIONS } = require('./master.js');
+const { classifyWeaponType, colorTagsOf, eventTagOf } = require('./tags.js');
 
-const slim = allRows.map(r => ({
-  section: r.section,
-  collection: r.collection,
-  name: r.name,
-  act: r.act || null,
-  total: r.total,
-  matchedCount: r.matchedCount,
-  allDone: r.allDone,
-  noneDone: r.noneDone,
-  results: r.results.map(x => ({ label: x.label, matched: x.matched, t: x.matchedTitle, id: x.videoId })),
-}));
+// match.js builds allRows as [...process(STORE), ...process(BATTLEPASS)], so this zip
+// stays index-aligned with the original wiki entries (which still carry `n`/`variants`).
+const sourceEntries = [...STORE, ...BATTLEPASS];
+
+const slim = allRows.map((r, i) => {
+  const entry = sourceEntries[i];
+  const tags = [
+    r.section === 'Store' ? 'ストア' : 'バトルパス',
+    classifyWeaponType(entry.n),
+    eventTagOf(entry, LIMITED_COLLECTIONS),
+    ...colorTagsOf(entry),
+  ].filter(Boolean);
+  return {
+    section: r.section,
+    collection: r.collection,
+    name: r.name,
+    act: r.act || null,
+    total: r.total,
+    matchedCount: r.matchedCount,
+    allDone: r.allDone,
+    noneDone: r.noneDone,
+    tags,
+    results: r.results.map(x => ({ label: x.label, matched: x.matched, t: x.matchedTitle, id: x.videoId })),
+  };
+});
 
 const outPath = path.join(__dirname, '..', 'assets', 'data.json');
 fs.writeFileSync(outPath, JSON.stringify(slim));

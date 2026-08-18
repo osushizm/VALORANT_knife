@@ -204,4 +204,12 @@ const BATTLEPASS = [
 {c:'Venturi', n:'Venturi Knife', act:'Ep 06 Act 1', jp:['ヴェンチュ'], variants:[]},
 ];
 
-module.exports = { STORE, BATTLEPASS, jpColor };
+// Collections the Wiki marks with "*": limited-time weapon skins that never appear in the
+// Store's daily rotation (Champions/VCT capsule knives, anniversary/collab exclusives, etc.).
+const LIMITED_COLLECTIONS = new Set([
+  '5 Years // Beta Remastered', 'Arcane', 'Champions 2021', 'Champions 2022',
+  'Champions 2023', 'Champions 2024', 'Champions 2025', 'Ignite',
+  'VCT 2025 Season', 'VCT 2026 Season', 'VCT LOCK//IN',
+]);
+
+module.exports = { STORE, BATTLEPASS, jpColor, LIMITED_COLLECTIONS, COLOR_JP };

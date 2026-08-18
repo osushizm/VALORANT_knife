@@ -90,11 +90,79 @@
     partList.appendChild(el);
   });
 
+  // ---- Tag filter panel ----
+  const WEAPON_TAGS = ['カラムビット','バタフライナイフ','扇','アックス','ダガー・クナイ','拳・グローブ','ハンマー・メイス','鎌','杖・ロッド','爪','ソード・ブレード','バット・棒','ナイフ','その他'];
+  const EVENT_TAGS = ['Champions','VCT','期間限定'];
+  const SOURCE_TAGS = ['ストア','バトルパス'];
+
+  const tagCounts = new Map();
+  rows.forEach(r => r.tags.forEach(t => tagCounts.set(t, (tagCounts.get(t)||0)+1)));
+
+  const knownSet = new Set([...WEAPON_TAGS, ...EVENT_TAGS, ...SOURCE_TAGS]);
+  const colorTags = Array.from(tagCounts.keys())
+    .filter(t => !knownSet.has(t))
+    .sort((a,b) => tagCounts.get(b) - tagCounts.get(a));
+  const weaponTagsPresent = WEAPON_TAGS.filter(t => tagCounts.has(t));
+  const eventTagsPresent = EVENT_TAGS.filter(t => tagCounts.has(t));
+
+  const selectedTags = new Set();
+
+  function tagChip(t){
+    return `<button type="button" class="tag-btn" data-tag="${esc(t)}">${esc(t)}<span style="opacity:.6"> ${tagCounts.get(t)}</span></button>`;
+  }
+
+  const tagPanel = document.getElementById('tag-panel');
+  tagPanel.innerHTML = `
+    <div class="tag-row"><div class="tag-row-label">区分</div><div class="tag-chips">${SOURCE_TAGS.map(tagChip).join('')}</div></div>
+    <div class="tag-row"><div class="tag-row-label">武器種</div><div class="tag-chips">${weaponTagsPresent.map(tagChip).join('')}</div></div>
+    <div class="tag-row"><div class="tag-row-label">イベント</div><div class="tag-chips">${eventTagsPresent.map(tagChip).join('')}</div></div>
+    <div class="tag-row"><div class="tag-row-label">色</div><div class="tag-chips collapsed" id="color-chips">${colorTags.map(tagChip).join('')}</div></div>
+    <div class="tag-row"><div class="tag-row-label"></div><button type="button" class="tag-more" id="color-more">色をすべて表示 (${colorTags.length})</button></div>
+    <div class="tag-footer">
+      <div class="tag-selected" id="tag-selected"><span class="none">タグ未選択(すべて表示中)</span></div>
+      <button type="button" class="tag-clear" id="tag-clear" disabled>クリア</button>
+    </div>
+  `;
+
+  document.getElementById('color-more').addEventListener('click', () => {
+    const el = document.getElementById('color-chips');
+    const btn = document.getElementById('color-more');
+    const collapsed = el.classList.toggle('collapsed');
+    btn.textContent = collapsed ? `色をすべて表示 (${colorTags.length})` : '色をたたむ';
+  });
+
+  tagPanel.addEventListener('click', e => {
+    const btn = e.target.closest('.tag-btn');
+    if (!btn) return;
+    const t = btn.dataset.tag;
+    if (selectedTags.has(t)) selectedTags.delete(t); else selectedTags.add(t);
+    syncTagUI();
+    render();
+  });
+
+  document.getElementById('tag-clear').addEventListener('click', () => {
+    selectedTags.clear();
+    syncTagUI();
+    render();
+  });
+
+  function syncTagUI(){
+    tagPanel.querySelectorAll('.tag-btn').forEach(b => b.classList.toggle('on', selectedTags.has(b.dataset.tag)));
+    const sel = document.getElementById('tag-selected');
+    const clearBtn = document.getElementById('tag-clear');
+    if (selectedTags.size === 0) {
+      sel.innerHTML = '<span class="none">タグ未選択(すべて表示中)</span>';
+      clearBtn.disabled = true;
+    } else {
+      sel.innerHTML = Array.from(selectedTags).map(t => `<span>#${esc(t)}</span>`).join('');
+      clearBtn.disabled = false;
+    }
+  }
+
   // ---- Full table ----
   const tbody = document.getElementById('tbody');
   const emptyNote = document.getElementById('empty-note');
   let statusFilter = 'all';
-  let sectionFilter = 'all';
   let query = '';
 
   function statusOf(r){ return r.allDone ? 'done' : (r.noneDone ? 'none' : 'partial'); }
@@ -104,11 +172,11 @@
     tbody.innerHTML = '';
     const q = query.trim().toLowerCase();
     const filtered = rows.filter(r=>{
-      if (sectionFilter !== 'all' && r.section !== sectionFilter) return false;
       const st = statusOf(r);
       if (statusFilter === 'incomplete' && st === 'done') return false;
       if (statusFilter === 'none' && st !== 'none') return false;
       if (q && !(r.collection.toLowerCase().includes(q) || r.name.toLowerCase().includes(q))) return false;
+      if (selectedTags.size && !Array.from(selectedTags).every(t => r.tags.includes(t))) return false;
       return true;
     });
     emptyNote.style.display = filtered.length ? 'none' : 'block';
@@ -127,6 +195,7 @@
             <div class="txt">
               <div class="col-name">${esc(r.name)}</div>
               <div class="col-coll">${esc(r.collection)}</div>
+              <div class="row-tags">${r.tags.filter(t => (WEAPON_TAGS.includes(t) && t !== 'その他') || EVENT_TAGS.includes(t)).map(t=>`<span class="row-tag">${esc(t)}</span>`).join('')}</div>
             </div>
           </div>
         </td>
@@ -177,14 +246,5 @@
       render();
     });
   });
-  document.querySelectorAll('#seg-section button').forEach(b=>{
-    b.addEventListener('click', () => {
-      document.querySelectorAll('#seg-section button').forEach(x=>x.classList.remove('active'));
-      b.classList.add('active');
-      sectionFilter = b.dataset.s;
-      render();
-    });
-  });
-
   render();
 })();
