@@ -63,6 +63,11 @@
     </div>
   `;
 
+  const storeCount = rows.filter(r=>r.section==='Store').length;
+  const bpCount = rows.filter(r=>r.section==='Battle Pass').length;
+  document.getElementById('footer-stats').textContent =
+    `集計対象: Store ${storeCount}件 / Battle Pass ${bpCount}件、計${rows.length}レコード・${totalItems}項目(ベース/アップグレード/ヴァリアント。チャンピオンオーラは対象外)。`;
+
   document.getElementById('cnt-missing').textContent = noneCount + '件';
   document.getElementById('cnt-partial').textContent = partialCount + '件';
   document.getElementById('cnt-all').textContent = rows.length + '件';

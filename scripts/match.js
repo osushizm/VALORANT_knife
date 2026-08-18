@@ -34,7 +34,10 @@ function buildItems(entry){
   const items = [];
   items.push({ key: 'base', label: 'ベース/無印' });
   if (hasLevel2(entry)) items.push({ key: 'level2', label: level2Label(entry), kw: LEVEL2_BROAD });
-  if (entry.aura) items.push({ key: 'aura', label: 'チャンピオンオーラ', kw: ['チャンピオンオーラ'] });
+  // Champion's Aura (entry.aura) is intentionally NOT tracked as a required item — the
+  // channel has decided not to chase these, so it shouldn't count against coverage or show
+  // up as "missing". It's still used below (allSpecialKeywordsNorm) so an aura-titled video
+  // never gets mistaken for a skin's base video.
   if (entry.vo) items.push({ key: 'vo', label: 'VO(日本語音声)', kw: ['日本音声','vo(ローカライズ'] });
   if (entry.songShuffle) items.push({ key: 'songShuffle', label: 'ソングシャッフル', kw: ['ソングシャッフル'] });
   (entry.variants || []).forEach(v => {
