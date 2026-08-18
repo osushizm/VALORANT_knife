@@ -16,12 +16,17 @@ scripts/
   videos.json        チャンネルの投稿動画一覧(id・タイトル・再生数)のスナップショット
   fetch-videos.js    YouTube Data API から videos.json を再取得する
   master.js          Wiki の全スキン一覧(コレクション/ベース/アップグレード/ヴァリアント)
+  jpname.js          投稿済み動画のタイトルから日本語表示名を抽出するロジック
   tags.js            武器種・イベント・色タグの判定ロジック
   match.js           videos.json と master.js を突き合わせるロジック
   build.js           突き合わせ+タグ付けを実行して assets/data.json を書き出す
 .github/workflows/
   update-data.yml    毎日 videos.json を再取得して data.json を自動コミットする GitHub Actions
 ```
+
+## 日本語表示名
+
+Wiki の英語名だけでなく、実際に投稿された動画のタイトルから日本語名を自動で抽出して併記しています(`scripts/jpname.js`)。手作業での翻訳・対訳表メンテナンスは不要で、ベース動画のタイトルから「【VALORANT ナイフ動画】」等の定型タグと「LEVEL 1 ベース」等のレベル表記を取り除いた文字列を使っています。まだ1本も投稿されていないスキンは日本語名が付きません(英語名のみ表示)。
 
 ## タグ絞り込み
 

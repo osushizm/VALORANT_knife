@@ -8,6 +8,7 @@ const path = require('path');
 const { allRows } = require('./match.js');
 const { STORE, BATTLEPASS, LIMITED_COLLECTIONS } = require('./master.js');
 const { classifyWeaponType, colorTagsOf, eventTagOf } = require('./tags.js');
+const { jpNameOf } = require('./jpname.js');
 
 // match.js builds allRows as [...process(STORE), ...process(BATTLEPASS)], so this zip
 // stays index-aligned with the original wiki entries (which still carry `n`/`variants`).
@@ -33,6 +34,7 @@ const slim = allRows.map((r, i) => {
     section: r.section,
     collection: r.collection,
     name: r.name,
+    jpName: jpNameOf(r.results),
     act: r.act || null,
     total: r.total,
     matchedCount: r.matchedCount,

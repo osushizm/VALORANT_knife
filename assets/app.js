@@ -73,6 +73,7 @@
     const el = document.createElement('div');
     el.className = 'miss-card';
     el.innerHTML = `<div class="coll">${esc(r.collection)}</div><div class="name">${esc(r.name)}</div>${r.act ? `<div class="act">${esc(r.act)}</div>` : ''}`;
+    // no jpName here: nothing's posted yet, so there's no video title to derive one from.
     missGrid.appendChild(el);
   });
 
@@ -92,7 +93,8 @@
       <div class="partial-top">
         <div class="titles">
           <div class="coll">${esc(r.collection)}${r.act ? ' · ' + esc(r.act) : ''}</div>
-          <div class="name">${esc(r.name)}</div>
+          <div class="name">${r.jpName ? esc(r.jpName) : esc(r.name)}</div>
+          ${r.jpName ? `<div class="name-en">${esc(r.name)}</div>` : ''}
         </div>
         <div class="prog">${r.matchedCount}/${r.total} 投稿済み</div>
         <div class="chips">${missing}</div>
@@ -188,7 +190,7 @@
       const st = statusOf(r);
       if (statusFilter === 'incomplete' && st === 'done') return false;
       if (statusFilter === 'none' && st !== 'none') return false;
-      if (q && !(r.collection.toLowerCase().includes(q) || r.name.toLowerCase().includes(q))) return false;
+      if (q && !(r.collection.toLowerCase().includes(q) || r.name.toLowerCase().includes(q) || (r.jpName && r.jpName.toLowerCase().includes(q)))) return false;
       if (selectedTags.size && !Array.from(selectedTags).every(t => r.tags.includes(t))) return false;
       return true;
     });
@@ -208,8 +210,8 @@
           <div class="name-cell">
             ${thumbId ? `<img loading="lazy" src="${YT_THUMB(thumbId)}" alt="">` : `<img alt="" style="visibility:hidden">`}
             <div class="txt">
-              <div class="col-name">${esc(r.name)}</div>
-              <div class="col-coll">${esc(r.collection)}</div>
+              <div class="col-name">${r.jpName ? esc(r.jpName) : esc(r.name)}</div>
+              <div class="col-coll">${r.jpName ? esc(r.name) + ' · ' : ''}${esc(r.collection)}</div>
               <div class="row-tags">${r.tags.filter(t => (WEAPON_TAGS.includes(t) && t !== 'その他') || EVENT_TAGS.includes(t)).map(t=>`<span class="row-tag">${esc(t)}</span>`).join('')}</div>
             </div>
           </div>

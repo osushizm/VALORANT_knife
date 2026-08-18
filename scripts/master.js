@@ -48,7 +48,7 @@ const STORE = [
 {c:'Bolt', n:'Bolt Knife', jp:['ボルトナイフ'], anim:true, variants:['Red','Black','White']},
 {c:'Bubblegum Deathwish', n:'Bubblegum Deathwish Chainsaw', jp:['バブルガム デスウィッシュ'], anim:true, variants:['Yellow','Red','Purple']},
 {c:'Celestial', n:'Celestial Fan', jp:['セレスティアル'], anim:true, variants:[]},
-{c:'Champions 2021', n:'Champions 2021 Karambit', jpOr:['CHAMPIONS 2021','チャンピオンズ 2021'], vfx:true, aura:true, variants:[]},
+{c:'Champions 2021', n:'Champions 2021 Karambit', jp:['CHAMPIONS 2021','カラムビット'], vfx:true, aura:true, variants:[]},
 {c:'Champions 2022', n:'Champions 2022 Butterfly Knife', jp:['CHAMPIONS 2022'], anim:true, aura:true, variants:[]},
 {c:'Champions 2023', n:'Champions 2023 Kunai', jp:['CHAMPIONS 2023'], anim:true, aura:true, variants:[]},
 {c:'Champions 2024', n:'Champions 2024 Blade', jp:['CHAMPIONS 2024'], anim:true, aura:true, variants:[]},

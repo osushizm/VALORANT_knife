@@ -62,8 +62,22 @@ function residual(norm, entry){
   return r;
 }
 
+// The channel tags essentially every per-skin showcase video with "ナイフ動画" or "knife:ナイフ"
+// in the title. Everything else in the upload history (streams, rankings, jokes, bug reports,
+// bonus/easter-egg clips…) can still coincidentally contain a bare collection keyword (e.g. a
+// stream titled about "ブラックマーケット バタフライナイフの色違い" is not the catalog video for
+// that skin). Prefer catalog-tagged candidates first; only fall back to untagged ones — filtered
+// to non-noisy where possible — when a skin genuinely has no properly tagged video.
+const CATALOG_TAG = /ナイフ動画|knife[:：]/i;
+const NOISE_WORDS = ['イースターエッグ','バグ','テスト','TEST','メイキング','隠し要素','アンケート','PICK RATE','ランキング','おすすめ','TOP5','TOP10','決定版','配信','枠'].map(normalize);
+function isNoisy(norm){ return NOISE_WORDS.some(w => norm.includes(w)); }
+
 function findMatch(entry, item){
-  const candidates = videos.filter(v => collectionMatches(v.norm, entry));
+  const allCandidates = videos.filter(v => collectionMatches(v.norm, entry));
+  const catalogTagged = allCandidates.filter(v => CATALOG_TAG.test(v.orig));
+  const pool = catalogTagged.length ? catalogTagged : allCandidates;
+  const clean = pool.filter(v => !isNoisy(v.norm));
+  const candidates = clean.length ? clean : pool;
   if (item.key === 'base') {
     const special = allSpecialKeywordsNorm(entry);
     return candidates.find(v => !special.some(k => residual(v.norm, entry).includes(k)));
