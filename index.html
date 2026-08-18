@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Knife Archive Ledger — VALORANT ナイフ動画 投稿カバレッジ台帳</title>
+<meta name="description" content="osushizmチャンネルのVALORANTナイフ動画投稿状況を、全ナイフスキン一覧と突き合わせて可視化した棚卸し表。動画リンク付き。">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🔪</text></svg>">
+<link rel="stylesheet" href="assets/styles.css">
+</head>
+<body>
+<div class="wrap">
+
+  <header class="top">
+    <div class="eyebrow">osushizm — Knife Skin Coverage</div>
+    <h1>ナイフ動画 投稿カバレッジ台帳</h1>
+    <p class="sub">
+      <a href="https://www.youtube.com/@osushizm/videos" target="_blank" rel="noopener">youtube.com/@osushizm</a> の投稿動画479本と、
+      <a href="https://valorant.fandom.com/wiki/Melee" target="_blank" rel="noopener">Valorant Fandom Wiki: Melee</a> に載る
+      全ナイフスキン(ストア + バトルパス)を突き合わせた棚卸し表。ベース・アップグレード(アニメーション/VFX等)・ヴァリアント単位で照合し、投稿済みのものはすべて動画へのリンク付き。行をクリックすると内訳が開きます。
+    </p>
+  </header>
+
+  <div class="dash" id="dash"></div>
+
+  <section class="block">
+    <div class="block-head">
+      <div class="block-title">未投稿(一本も無い)コレクション <span class="count" id="cnt-missing"></span></div>
+    </div>
+    <p class="block-desc">主に直近のバトルパス(V25/V26以降)。この系統だけ動画が一本も見つかりませんでした。</p>
+    <div class="missing-grid" id="missing-grid"></div>
+  </section>
+
+  <section class="block">
+    <div class="block-head">
+      <div class="block-title">一部だけ未投稿のコレクション <span class="count" id="cnt-partial"></span></div>
+    </div>
+    <p class="block-desc">ベース+アニメーションは投稿済みだが、ヴァリアント(色変化)や上位レベルが抜けているもの。サムネイルは投稿済み動画へのリンクです。</p>
+    <div class="partial-list" id="partial-list"></div>
+  </section>
+
+  <section class="block">
+    <div class="block-head">
+      <div class="block-title">全コレクション一覧 <span class="count" id="cnt-all"></span></div>
+      <div class="controls">
+        <input class="search" id="search" type="text" placeholder="コレクション名・スキン名で検索…" />
+        <div class="seg" id="seg-status">
+          <button data-f="all" class="active">すべて</button>
+          <button data-f="incomplete">未完了のみ</button>
+          <button data-f="none">未投稿のみ</button>
+        </div>
+        <div class="seg" id="seg-section">
+          <button data-s="all" class="active">Store + BP</button>
+          <button data-s="Store">Store</button>
+          <button data-s="Battle Pass">Battle Pass</button>
+        </div>
+      </div>
+    </div>
+    <div class="table-shell">
+      <div class="table-scroll">
+        <table>
+          <thead>
+            <tr>
+              <th style="width:110px">区分</th>
+              <th>コレクション / スキン</th>
+              <th style="width:110px">実装</th>
+              <th style="width:150px">進捗</th>
+              <th style="width:110px">状態</th>
+            </tr>
+          </thead>
+          <tbody id="tbody"></tbody>
+        </table>
+      </div>
+      <div class="empty-note" id="empty-note" style="display:none">該当する項目がありません</div>
+    </div>
+  </section>
+
+  <footer>
+    <div>集計対象: Store 129件 / Battle Pass 37件、計166レコード・514項目(ベース/アップグレード/ヴァリアント)。</div>
+    <div><a href="https://github.com/osushizm/VALORANT_knife" target="_blank" rel="noopener">GitHubリポジトリ</a></div>
+  </footer>
+
+</div>
+<script src="assets/app.js"></script>
+</body>
+</html>
