@@ -155,6 +155,11 @@ section.block{ display:flex; flex-direction:column; gap:14px; }
 .seg button{ font-family:var(--font-body); font-size:12.5px; font-weight:600; padding:6px 12px; border-radius:7px; border:none; background:transparent; color:var(--text-dim); cursor:pointer; }
 .seg button.active{ background:var(--surface); color:var(--text); box-shadow:var(--shadow); }
 .seg button:focus-visible{ outline:2px solid var(--accent); outline-offset:1px; }
+.sort-select{
+  font-family:var(--font-body); font-size:12.5px; font-weight:600; color:var(--text);
+  background:var(--surface-2); border:1px solid var(--border); border-radius:9px; padding:7px 10px;
+}
+.sort-select:focus{ outline:2px solid var(--accent); outline-offset:-1px; }
 
 /* ---------- Tag filter panel ---------- */
 .tag-panel{
@@ -230,6 +235,10 @@ tr.exp-row td{ padding:0; }
 .exp-item.no .lbl{ color:var(--bad); }
 .exp-item .ttl{ color:var(--text-faint); font-size:11.5px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
 .exp-item.ok .ttl{ color:var(--text); }
+.exp-item .views{ color:var(--text-faint); font-size:10.5px; font-variant-numeric:tabular-nums; }
+.posted-thumb b{ font-weight:700; color:var(--text-faint); margin-left:5px; }
+.posted-thumb b::before{ content:"· "; font-weight:400; }
+td.col-views{ font-family:var(--font-mono); font-variant-numeric:tabular-nums; color:var(--text-dim); white-space:nowrap; }
 .play-badge{
   position:relative;
 }

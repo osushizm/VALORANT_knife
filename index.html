@@ -49,6 +49,11 @@
           <button data-f="incomplete">未完了のみ</button>
           <button data-f="none">未投稿のみ</button>
         </div>
+        <select class="sort-select" id="sort-select">
+          <option value="default">並び替え: 収録順</option>
+          <option value="views-desc">再生数が多い順</option>
+          <option value="views-asc">再生数が少ない順</option>
+        </select>
       </div>
     </div>
 
@@ -59,11 +64,12 @@
         <table>
           <thead>
             <tr>
-              <th style="width:110px">区分</th>
+              <th style="width:100px">区分</th>
               <th>コレクション / スキン</th>
-              <th style="width:110px">実装</th>
-              <th style="width:150px">進捗</th>
-              <th style="width:110px">状態</th>
+              <th style="width:100px">実装</th>
+              <th style="width:140px">進捗</th>
+              <th style="width:100px">再生数</th>
+              <th style="width:100px">状態</th>
             </tr>
           </thead>
           <tbody id="tbody"></tbody>

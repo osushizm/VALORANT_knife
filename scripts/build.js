@@ -21,6 +21,14 @@ const slim = allRows.map((r, i) => {
     eventTagOf(entry, LIMITED_COLLECTIONS),
     ...colorTagsOf(entry),
   ].filter(Boolean);
+  const results = r.results.map(x => ({
+    label: x.label,
+    matched: x.matched,
+    t: x.matchedTitle,
+    id: x.videoId,
+    views: x.viewCount != null ? Number(x.viewCount) : null,
+  }));
+  const views = results.reduce((a, x) => a + (x.views || 0), 0);
   return {
     section: r.section,
     collection: r.collection,
@@ -31,7 +39,8 @@ const slim = allRows.map((r, i) => {
     allDone: r.allDone,
     noneDone: r.noneDone,
     tags,
-    results: r.results.map(x => ({ label: x.label, matched: x.matched, t: x.matchedTitle, id: x.videoId })),
+    views,
+    results,
   };
 });
 

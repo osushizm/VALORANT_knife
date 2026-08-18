@@ -14,6 +14,13 @@
     return m ? m.id : null;
   }
 
+  function formatViews(n){
+    if (n == null) return '—';
+    if (n >= 100000000) return (n/100000000).toFixed(n%100000000===0?0:1) + '億';
+    if (n >= 10000) return (n/10000).toFixed(n%10000===0?0:1) + '万';
+    return n.toLocaleString('ja-JP');
+  }
+
   const totalItems = rows.reduce((a,r)=>a+r.total,0);
   const matchedItems = rows.reduce((a,r)=>a+r.matchedCount,0);
   const missingItems = totalItems - matchedItems;
@@ -21,6 +28,7 @@
   const noneCount = rows.filter(r=>r.noneDone).length;
   const partialCount = rows.filter(r=>!r.allDone && !r.noneDone).length;
   const doneCount = rows.filter(r=>r.allDone).length;
+  const totalViews = rows.reduce((a,r)=>a+r.views,0);
 
   document.getElementById('dash').innerHTML = `
     <div class="coverage-cell">
@@ -49,6 +57,10 @@
       <div class="stat-label">投稿済み 項目数</div>
       <div class="stat-value">${matchedItems}<small>本</small></div>
     </div>
+    <div>
+      <div class="stat-label">合計再生数(ナイフ動画)</div>
+      <div class="stat-value">${formatViews(totalViews)}<small>回</small></div>
+    </div>
   `;
 
   document.getElementById('cnt-missing').textContent = noneCount + '件';
@@ -71,9 +83,9 @@
     el.className = 'partial-row';
     const missing = r.results.filter(x=>!x.matched).map(x=>`<span class="chip">${esc(x.label)}</span>`).join('');
     const posted = r.results.filter(x=>x.matched).map(x=>`
-      <a class="posted-thumb" href="${YT_WATCH(x.id)}" target="_blank" rel="noopener" title="${esc(x.t)}">
+      <a class="posted-thumb" href="${YT_WATCH(x.id)}" target="_blank" rel="noopener" title="${esc(x.t)} · ${formatViews(x.views)}回視聴">
         <img loading="lazy" src="${YT_THUMB(x.id)}" alt="">
-        <span>${esc(x.label)}</span>
+        <span>${esc(x.label)}<b>${formatViews(x.views)}回</b></span>
       </a>
     `).join('');
     el.innerHTML = `
@@ -164,6 +176,7 @@
   const emptyNote = document.getElementById('empty-note');
   let statusFilter = 'all';
   let query = '';
+  let sortMode = 'default';
 
   function statusOf(r){ return r.allDone ? 'done' : (r.noneDone ? 'none' : 'partial'); }
   function statusLabel(s){ return s==='done' ? '完了' : (s==='none' ? '未投稿' : '一部'); }
@@ -179,6 +192,8 @@
       if (selectedTags.size && !Array.from(selectedTags).every(t => r.tags.includes(t))) return false;
       return true;
     });
+    if (sortMode === 'views-desc') filtered.sort((a,b) => b.views - a.views);
+    if (sortMode === 'views-asc') filtered.sort((a,b) => a.views - b.views);
     emptyNote.style.display = filtered.length ? 'none' : 'block';
 
     filtered.forEach(r => {
@@ -201,6 +216,7 @@
         </td>
         <td class="col-act">${r.act ? esc(r.act) : '&mdash;'}</td>
         <td class="col-prog"><span class="mini-bar"><span style="width:${pctRow}%"></span></span>${r.matchedCount}/${r.total}</td>
+        <td class="col-views">${r.views ? formatViews(r.views) : '&mdash;'}</td>
         <td><span class="pill ${st}">${statusLabel(st)}</span></td>
       `;
       const exp = document.createElement('tr');
@@ -214,6 +230,7 @@
               <span class="meta">
                 <span class="lbl">${esc(x.label)}</span>
                 <span class="ttl">${esc(x.t)}</span>
+                <span class="views">${formatViews(x.views)} 回視聴</span>
               </span>
             </a>`;
         }
@@ -226,7 +243,7 @@
             </span>
           </div>`;
       }).join('');
-      exp.innerHTML = `<td colspan="5"><div class="exp-panel">${items}</div></td>`;
+      exp.innerHTML = `<td colspan="6"><div class="exp-panel">${items}</div></td>`;
 
       tr.addEventListener('click', () => {
         exp.style.display = exp.style.display === 'none' ? 'table-row' : 'none';
@@ -238,6 +255,7 @@
   }
 
   document.getElementById('search').addEventListener('input', e => { query = e.target.value; render(); });
+  document.getElementById('sort-select').addEventListener('change', e => { sortMode = e.target.value; render(); });
   document.querySelectorAll('#seg-status button').forEach(b=>{
     b.addEventListener('click', () => {
       document.querySelectorAll('#seg-status button').forEach(x=>x.classList.remove('active'));

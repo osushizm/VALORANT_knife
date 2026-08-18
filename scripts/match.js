@@ -6,7 +6,7 @@ const videosRaw = require('./videos.json');
 // inconsistent capitalization ("PACIFIC" vs "Pacific") and spacing ("PRO  2" vs "PRO 2").
 function normalize(s){ return s.replace(/[\s　]+/g,' ').toLowerCase(); }
 
-const videos = videosRaw.map(v => ({ id: v.contentId, orig: v.title, norm: normalize(v.title) }));
+const videos = videosRaw.map(v => ({ id: v.contentId, orig: v.title, norm: normalize(v.title), viewCount: v.viewCount, publishedAt: v.publishedAt }));
 
 function collectionMatches(norm, entry){
   if (entry.jpOr) return entry.jpOr.some(k => norm.includes(normalize(k)));
@@ -77,7 +77,7 @@ function process(list, sectionName){
     const items = buildItems(entry);
     const results = items.map(item => {
       const m = findMatch(entry, item);
-      return { ...item, matched: !!m, matchedTitle: m ? m.orig : null, videoId: m ? m.id : null };
+      return { ...item, matched: !!m, matchedTitle: m ? m.orig : null, videoId: m ? m.id : null, viewCount: m ? m.viewCount : null, publishedAt: m ? m.publishedAt : null };
     });
     const missing = results.filter(r => !r.matched);
     rows.push({
