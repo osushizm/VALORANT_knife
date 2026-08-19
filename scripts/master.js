@@ -163,6 +163,10 @@ const STORE = [
 {c:'Wonderstallion', n:'Wonderstallion Hammer', jp:['ワンダースタリオン'], anim:true, variants:[]},
 {c:'Xenohunter', n:'Xenohunter Knife', jp:['ゼノハンター'], anim:true, variants:[]},
 {c:'XERØFANG', n:'XERØFANG Knife', jp:['ゼロファングナイフ'], anim:true, variants:['Black','Pink','Silver']},
+// Provisional: released the same day this was added, not yet documented on the Fandom wiki.
+// English collection name is a placeholder (エアリス → "Aeris") — fix once the wiki catches up.
+// Variants unknown for now; add them here once the channel posts (or the wiki lists) more.
+{c:'Suit of Aeris', n:'Suit of Aeris', jp:['スーツ・オブ・エアリス'], anim:true, variants:[]},
 ];
 
 const BATTLEPASS = [
