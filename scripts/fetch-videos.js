@@ -69,13 +69,26 @@ async function fetchVideoDetails(ids) {
   console.log('Fetching upload playlist item ids…');
   const ids = await fetchAllVideoIds();
   console.log(`Found ${ids.length} videos. Fetching details…`);
-  const videos = await fetchVideoDetails(ids);
-  // Newest first, matching the channel's default "videos" tab ordering.
-  videos.sort((a, b) => new Date(b.publishedAt) - new Date(a.publishedAt));
+  const fetched = await fetchVideoDetails(ids);
 
+  // Merge into the existing file rather than overwrite it. The "uploads" playlist can lag
+  // a freshly-published video by minutes to hours before it's indexed, so a plain overwrite
+  // would silently drop videos this script (or a manual edit) already knew about — this bit
+  // us once already. Fetched data wins for anything it does have (fresher view counts,
+  // corrected titles); anything only the old file knows about is kept as-is.
   const outPath = path.join(__dirname, 'videos.json');
-  fs.writeFileSync(outPath, JSON.stringify(videos));
-  console.log('Wrote', outPath, `(${videos.length} videos)`);
+  let existing = [];
+  try { existing = JSON.parse(fs.readFileSync(outPath, 'utf8')); } catch (e) { /* first run */ }
+
+  const byId = new Map(existing.map(v => [v.contentId, v]));
+  fetched.forEach(v => byId.set(v.contentId, v));
+  const merged = Array.from(byId.values());
+  // Newest first, matching the channel's default "videos" tab ordering.
+  merged.sort((a, b) => new Date(b.publishedAt) - new Date(a.publishedAt));
+
+  fs.writeFileSync(outPath, JSON.stringify(merged));
+  const added = merged.length - existing.length;
+  console.log('Wrote', outPath, `(${merged.length} videos, ${added >= 0 ? '+' + added : added} vs previous)`);
 })().catch(err => {
   console.error(err);
   process.exit(1);
